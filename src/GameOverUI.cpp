@@ -1,20 +1,18 @@
 #include "GameOverUI.h"
-#include <string>
-#include "TetrisConfig.h"
 
 GameOverUI::GameOverUI()
 {
 	//Load Font
 	m_font.loadFromFile(tetris_config::font_path);
 
-	//Init Next Shape Container
+	//Init Container
 	m_background = RectangleShape(Vector2f(640, 640));
 	Color bgColor = tetris_config::foreground_color;
 	bgColor.a = 200;
 	m_background.setFillColor(bgColor);
 	m_background.setPosition(0, 0);
 
-	//Init Next Shape Title
+	//Init Title
 	m_gameOverText = Text("GAME OVER!", m_font, 32);
 	m_gameOverText.setFillColor(tetris_config::background_color);
 	m_gameOverText.setStyle(Text::Style::Bold);

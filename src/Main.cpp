@@ -1,15 +1,15 @@
 #include "TetrisGame.h"
 
 //The entry point to any game. Usually you wouldn't need to alter this code.
-//However window size, title, background color and framerate limit can be changed.
+//However, window size, title, background color and framerate limit can be changed.
 int main()
 {
+    //Init the window.
+    RenderWindow window(VideoMode(640, 640), tetris_config::game_title);
+    window.setFramerateLimit(60);
+
     if (std::unique_ptr<Game> game = std::make_unique<TetrisGame>())
     {
-        //Init the window.
-        RenderWindow window(VideoMode(640, 640), tetris_config::game_title);
-        window.setFramerateLimit(60);
-
         //Init the game.
         game->OnInit();
 
@@ -42,7 +42,7 @@ int main()
                 game->OnProcessEvent(event);
             }
 
-            window.clear(tetris_config::background_color);
+            window.clear();
 
             //Update the game and display it on the screen.
             game->OnUpdate(deltaTime);
@@ -53,7 +53,6 @@ int main()
 
         //Destroy the game.
         game->OnDestroy();
-
         return 0;
     }
     return -1;

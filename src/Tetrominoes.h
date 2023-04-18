@@ -42,32 +42,32 @@ struct Tetromino
 
 	void Rotate()
 	{
-		Vector2i* simulatedPoints = SimulateRotation();
+        std::vector<Vector2i> simulatedPoints = SimulateRotation();
 		for (int i = 0; i < 4; i++)
 		{
 			m_tiles[i].SetPosition(simulatedPoints[i]);
 		}
 	}
 
-	Vector2i* SimulateRotation()
+    std::vector<Vector2i> SimulateRotation()
 	{
 		Vector2i origin = m_tiles[1].GetPosition();
-		Vector2i points[4];
+        std::vector<Vector2i> points;
 		for (int i = 0; i < 4; i++)
 		{
 			Vector2i newPos(origin.x - (m_tiles[i].GetPosition().y - origin.y), origin.y + (m_tiles[i].GetPosition().x - origin.x));
-			points[i] = newPos;
+            points.push_back(newPos);
 		}
 		return points;
 	}
 
-	Vector2i* SimulateMovement(const Vector2i& movementVector)
+    std::vector<Vector2i> SimulateMovement(const Vector2i& movementVector)
 	{
-		Vector2i points[4];
+        std::vector<Vector2i> points;
 
 		for (int i = 0; i < 4; i++)
 		{
-			points[i] = m_tiles[i].GetPosition() + movementVector;;
+			points.push_back(m_tiles[i].GetPosition() + movementVector);
 		}
 		return points;
 	}
@@ -87,13 +87,13 @@ struct Tetromino
 		return m_tiles;
 	}
 
-	Vector2i* GetPositionArray() const
+    std::vector<Vector2i>GetPositionArray() const
 	{
-		Vector2i points[4];
+        std::vector<Vector2i> points;
 
 		for (int i = 0; i < 4; i++)
 		{
-			points[i] = m_tiles[i].GetPosition();
+            points.push_back(m_tiles[i].GetPosition());
 		}
 		return points;
 	}

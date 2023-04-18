@@ -70,5 +70,5 @@ public:
 private:
 	Sprite m_sprite;
 	Vector2i m_position;
-	float m_tileSize = 100.f;
+	float m_tileSize;
 };

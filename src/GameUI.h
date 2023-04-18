@@ -1,6 +1,7 @@
 #pragma once
 #include "Tetrominoes.h"
 #include "UI_Element.h"
+#include "RoundedRectangleShape.hpp"
 
 class GameUI : public UI_Element
 {
@@ -17,7 +18,7 @@ private:
 	Text m_nextText;
 	Text m_levelText;
 	Text m_scoreText;
-	RectangleShape m_nextContainer;
-	RectangleShape m_scoreContainer;
+	RoundedRectangleShape m_nextContainer;
+    RoundedRectangleShape m_scoreContainer;
 	Tetromino m_nextShape;
 };

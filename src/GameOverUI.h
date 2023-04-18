@@ -1,5 +1,6 @@
 #pragma once
 #include "UI_Element.h"
+#include "TetrisConfig.h"
 
 class GameOverUI : public UI_Element
 {
