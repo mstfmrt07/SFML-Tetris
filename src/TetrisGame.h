@@ -37,6 +37,7 @@ private:
 
     TetrisTile m_tetrisTable[rows][columns];
 
+    bool m_isPlaying = false;
     int m_level = 0;
     int m_score = 0;
 

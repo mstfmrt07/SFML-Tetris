@@ -18,6 +18,7 @@ namespace tetris_config
     const std::string line_clear_sound = assetsPath + "line-clear.wav";
     const std::string rotate_sound = assetsPath + "rotate.wav";
     const std::string move_sound = assetsPath + "move.wav";
+    const std::string place_sound = assetsPath + "place.wav";
 
 	const sf::Color background_color = sf::Color::White;
 	const sf::Color foreground_color = sf::Color(38, 43, 57, 255);
@@ -30,7 +31,7 @@ namespace tetris_config
 	const float tileSize = 32.0f;
 
 	//Amount of time between two consecutive moves on the horizontal axis. (Seconds)
-	const float movement_threshold = 0.05f;
+	const float movement_threshold = 0.075f;
 
 	//Amount of time for a tetris piece to move one block down. (Seconds)
 	const float fall_threshold = 0.6f;

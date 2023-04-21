@@ -4,6 +4,8 @@
 
 void TetrisGame::OnInit()
 {
+    m_isPlaying = true;
+
     //Set the random seed.
     srand(time(NULL));
 
@@ -38,6 +40,9 @@ void TetrisGame::OnInit()
 
 void TetrisGame::OnUpdate(float deltaTime)
 {
+    if(!m_isPlaying)
+        return;
+
     m_movementTimer += deltaTime;
     m_fallTimer += deltaTime;
     m_rotateTimer += deltaTime;
@@ -52,6 +57,8 @@ void TetrisGame::OnUpdate(float deltaTime)
     {
         PlaceGhostShape();
     }
+
+    m_soundManager.Update();
 }
 
 void TetrisGame::OnRender(RenderWindow& window)
@@ -157,6 +164,8 @@ void TetrisGame::MoveShape()
             else
             {
                 //TODO: Implement Game Over
+                m_isPlaying = false;
+                m_soundManager.DisposeAll();
                 m_gameOverUI.SetValues(m_level, m_score);
                 m_gameOverUI.SetVisible(true);
                 m_gameUI.SetVisible(false);
@@ -231,6 +240,8 @@ void TetrisGame::PlaceShape()
         m_tetrisTable[tile.GetPosition().y][tile.GetPosition().x].isOccupied = true;
         m_tetrisTable[tile.GetPosition().y][tile.GetPosition().x].SetColorRect(tile.GetColorRect());
     }
+
+    m_soundManager.PlaySound(SoundManager::Place);
 }
 
 //Check if there are clear lines.
