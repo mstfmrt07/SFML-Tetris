@@ -38,6 +38,13 @@ int main()
                     window.setView(sf::View(visibleArea));
                 }
 
+                //Handle window focus changes.
+                if (event.type == sf::Event::LostFocus)
+                    game->OnPause();
+
+                if (event.type == sf::Event::GainedFocus)
+                    game->OnResume();
+
                 //Process Game Events
                 game->OnProcessEvent(event);
             }

@@ -277,3 +277,13 @@ bool TetrisGame::CheckGameOver()
     }
     return false;
 }
+
+void TetrisGame::OnPause()
+{
+    m_isPlaying = false;
+}
+
+void TetrisGame::OnResume()
+{
+    m_isPlaying = true;
+}

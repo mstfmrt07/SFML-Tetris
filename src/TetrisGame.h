@@ -16,6 +16,8 @@ public:
     void OnRender(RenderWindow& window) override;
     void OnProcessEvent(Event& event) override;
     void OnDestroy() override;
+    void OnPause() override;
+    void OnResume() override;
 
 private:
     bool CheckCollision(std::vector<Vector2i> targetPoints);
