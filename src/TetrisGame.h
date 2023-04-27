@@ -26,7 +26,8 @@ private:
     void RotateShape();
     void SpawnShape();
     void PlaceShape();
-    void CheckClearLines();
+    void HardDropShape();
+    void CheckClearRows();
     void ClearLine(int lineIndex);
     void PlaceGhostShape();
 
@@ -43,9 +44,10 @@ private:
     int m_level = 0;
     int m_score = 0;
 
-    float m_fallTimer = 0.f;
-    float m_movementTimer = 0.f;
-    float m_rotateTimer = 0.f;
+    float m_fallTimer = tetris_config::fall_threshold;
+    float m_movementTimer = tetris_config::movement_threshold;
+    float m_rotateTimer = tetris_config::rotate_threshold;
+    float m_hardDropTimer = tetris_config::hard_drop_threshold;
 
     Tetromino m_currentShape;
     Tetromino m_currentGhost;

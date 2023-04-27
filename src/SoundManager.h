@@ -39,10 +39,10 @@ public:
 
     void PlaySound(SoundType soundType)
     {
-        //If there is no waiting sound, push a new one.
+        //If there is no waiting sound, push a new one into playing queue.
         if(m_waitingQueue.empty())
         {
-            m_playingQueue.push_back(Sound());
+            m_playingQueue.emplace_back();
         }
         else
         {

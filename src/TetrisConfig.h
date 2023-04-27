@@ -32,13 +32,16 @@ namespace tetris_config
 	const float tileSize = 32.0f;
 
 	//Amount of time between two consecutive moves on the horizontal axis. (Seconds)
-	const float movement_threshold = 0.075f;
+	const float movement_threshold = 0.1f;
 
 	//Amount of time for a tetris piece to move one block down. (Seconds)
 	const float fall_threshold = 0.6f;
 
-	//Horizontal movement time threshold. (Seconds)
+	//Amount of time between two consecutive rotates. (Seconds)
 	const float rotate_threshold = 0.2f;
+
+    //Amount of time between two consecutive hard drops. (Seconds)
+    const float hard_drop_threshold = 0.4f;
 
 	//Defines how fast will a tetris piece would fall when the "soft drop" key is pressed.
 	const float fast_fall_factor = 15.f;

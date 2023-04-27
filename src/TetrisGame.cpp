@@ -1,5 +1,5 @@
 #include "TetrisGame.h"
-#include <time.h>
+#include <ctime>
 #include <iostream>
 
 void TetrisGame::OnInit()
@@ -7,7 +7,7 @@ void TetrisGame::OnInit()
     m_isPlaying = true;
 
     //Set the random seed.
-    srand(time(NULL));
+    srand(time(nullptr));
 
     //Init variables
     m_level = 0;
@@ -46,12 +46,18 @@ void TetrisGame::OnUpdate(float deltaTime)
     m_movementTimer += deltaTime;
     m_fallTimer += deltaTime;
     m_rotateTimer += deltaTime;
+    m_hardDropTimer += deltaTime;
 
     if (m_input.rotating && m_rotateTimer > tetris_config::rotate_threshold)
     {
         RotateShape();
     }
     MoveShape();
+
+    if (m_input.hardDrop && m_hardDropTimer > tetris_config::hard_drop_threshold)
+    {
+        HardDropShape();
+    }
 
     if (!m_ghostPositionFound)
     {
@@ -155,21 +161,6 @@ void TetrisGame::MoveShape()
         else
         {
             PlaceShape();
-            CheckClearLines();
-
-            if (!CheckGameOver())
-            {
-                SpawnShape();
-            }
-            else
-            {
-                //TODO: Implement Game Over
-                m_isPlaying = false;
-                m_soundManager.DisposeAll();
-                m_gameOverUI.SetValues(m_level, m_score);
-                m_gameOverUI.SetVisible(true);
-                m_gameUI.SetVisible(false);
-            }
         }
 
         m_fallTimer = 0.f;
@@ -200,6 +191,16 @@ void TetrisGame::PlaceGhostShape()
         }
     }
 }
+
+void TetrisGame::HardDropShape()
+{
+    m_currentShape.SetPosition(m_currentGhost.GetPosition());
+    PlaceShape();
+
+    m_ghostPositionFound = false;
+    m_hardDropTimer = 0.0f;
+}
+
 
 //Clear the filled line.
 void TetrisGame::ClearLine(int lineIndex)
@@ -242,40 +243,60 @@ void TetrisGame::PlaceShape()
     }
 
     m_soundManager.PlaySound(SoundManager::Place);
+
+    CheckClearRows();
+
+    if(!CheckGameOver())
+        SpawnShape();
 }
 
-//Check if there are clear lines.
-void TetrisGame::CheckClearLines()
+//Check if there are clear rows.
+void TetrisGame::CheckClearRows()
 {
-    for (int m = 0; m < rows; m++)
+    std::vector<int> clearRows;
+
+    for (int row = 0; row < rows; row++)
     {
-        bool lineClear = true;
-        for (int n = 0; n < columns; n++)
+        bool rowIsClear = true;
+        for (int col = 0; col < columns; col++)
         {
-            if (!m_tetrisTable[m][n].isOccupied)
+            if (!m_tetrisTable[row][col].isOccupied)
             {
-                lineClear = false;
+                rowIsClear = false;
                 break;
             }
         }
 
-        if (lineClear)
-        {
-            ClearLine(m);
-        }
+        if (rowIsClear)
+            clearRows.push_back(row);
+    }
+
+    for (int row : clearRows) {
+        ClearLine(row);
     }
 }
 
 bool TetrisGame::CheckGameOver()
 {
+    bool gameOver = false;
     auto targetPoints = m_currentShape.GetPositionArray();
 
     for (int i = 0; i < 4; i++)
     {
         if (targetPoints[i].y <= 0)
-            return true;
+            gameOver = true;
     }
-    return false;
+
+    if (gameOver)
+    {
+        //TODO: Implement Game Over
+        m_isPlaying = false;
+        m_soundManager.DisposeAll();
+        m_gameOverUI.SetValues(m_level, m_score);
+        m_gameOverUI.SetVisible(true);
+        m_gameUI.SetVisible(false);
+    }
+    return gameOver;
 }
 
 void TetrisGame::OnPause()

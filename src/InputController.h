@@ -34,7 +34,7 @@ private:
         if (key == Keyboard::Up || key == Keyboard::W)
             rotating = true;
 
-        if (key == Keyboard::X)
+        if (key == Keyboard::Space)
             hardDrop = true;
     }
 
@@ -49,7 +49,7 @@ private:
         if (key == Keyboard::Up || key == Keyboard::W)
             rotating = false;
 
-        if (key == Keyboard::X)
+        if (key == Keyboard::Space)
             hardDrop = false;
     }
 };
