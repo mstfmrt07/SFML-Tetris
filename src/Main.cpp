@@ -8,6 +8,11 @@ int main()
     RenderWindow window(VideoMode(640, 640), tetris_config::game_title);
     window.setFramerateLimit(60);
 
+    //Set the window icon.
+    sf::Image icon;
+    if(icon.loadFromFile(tetris_config::icon_path))
+        window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+
     if (std::unique_ptr<Game> game = std::make_unique<TetrisGame>())
     {
         //Init the game.

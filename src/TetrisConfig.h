@@ -13,6 +13,7 @@ namespace tetris_config
 
     const std::string assetsPath = "../../assets/";
 	const std::string texture_path = assetsPath + "tetris-tileset.png";
+    const std::string icon_path = assetsPath + "game-icon.png";
 	const std::string font_path = assetsPath + "tetris-font.ttf";
 
     const std::string line_clear_sound = assetsPath + "line-clear.wav";
