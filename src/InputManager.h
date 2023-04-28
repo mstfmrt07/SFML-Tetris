@@ -3,7 +3,7 @@
 
 using namespace sf;
 
-class InputController
+class InputManager
 {
 public:
 	void OnProcessEvent(Event& event)
@@ -14,6 +14,17 @@ public:
         else if(event.type == Event::KeyReleased)
             HandleKeyReleased(event.key.code);
 	}
+
+    bool IsTextClicked(sf::Text& text, sf::RenderWindow& window )
+    {
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
+            Vector2i mousePos = sf::Mouse::getPosition(window);
+            if(text.getGlobalBounds().contains(mousePos.x, mousePos.y))
+                return true;
+        }
+        return false;
+    }
 
     int horizontalInput = 0;
     bool hardDrop = false;
