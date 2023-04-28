@@ -1,310 +1,41 @@
 #include "TetrisGame.h"
-#include <ctime>
-#include <iostream>
+#include "MainMenuState.h"
 
 void TetrisGame::OnInit()
 {
-    m_isPlaying = true;
-
-    //Set the random seed.
-    srand(time(nullptr));
-
-    //Init variables
-    m_level = 0;
-    m_score = 0;
-    m_nextFigureIndex = -1;
-    m_ghostPositionFound = false;
-
-    //Load texture from asset path.
-    if(!m_texture.loadFromFile(tetris_config::texture_path))
-    {
-        std::cout << "Error while loading texture!" << std::endl;
-    }
-
-    //Set UI visibility
-    m_gameUI.SetVisible(true);
-    m_gameOverUI.SetVisible(false);
-    m_gameUI.SetValues(m_level, m_score);
-
-    //Init table
-    for (int i = 0; i < rows; i++)
-    {
-        for (int j = 0; j < columns; j++)
-        {
-            m_tetrisTable[i][j] = TetrisTile(Vector2i(j, i), m_texture, EmptyRect);
-        }
-    }
-
-    SpawnShape();
+    m_data = std::make_shared<GameData>();
+    m_data->stateMachine.AddState(std::make_unique<MainMenuState>(m_data), true);
 }
 
 void TetrisGame::OnUpdate(float deltaTime)
 {
-    if(!m_isPlaying)
-        return;
-
-    m_movementTimer += deltaTime;
-    m_fallTimer += deltaTime;
-    m_rotateTimer += deltaTime;
-    m_hardDropTimer += deltaTime;
-
-    if (m_input.rotating && m_rotateTimer > tetris_config::rotate_threshold)
-    {
-        RotateShape();
-    }
-    MoveShape();
-
-    if (m_input.hardDrop && m_hardDropTimer > tetris_config::hard_drop_threshold)
-    {
-        HardDropShape();
-    }
-
-    if (!m_ghostPositionFound)
-    {
-        PlaceGhostShape();
-    }
-
-    m_soundManager.Update();
+    m_data->stateMachine.Update();
+    m_data->stateMachine.GetActiveState()->Update(deltaTime);
 }
 
 void TetrisGame::OnRender(RenderWindow& window)
 {
-    //Draw Table
-    for (int i = 0; i < rows; i++)
-    {
-        for (int j = 0; j < columns; j++)
-        {
-            m_tetrisTable[i][j].Draw(window);
-        }
-    }
-
-    //Draw current shape and ghost.
-    m_currentGhost.Draw(window);
-    m_currentShape.Draw(window);
-
-    //Draw UI
-    m_gameUI.OnRender(window);
-    m_gameOverUI.OnRender(window);
+    m_data->stateMachine.GetActiveState()->Render(window);
 }
 
 void TetrisGame::OnProcessEvent(Event& event)
 {
-    m_input.OnProcessEvent(event);
+    m_data->input.OnProcessEvent(event);
+    m_data->stateMachine.GetActiveState()->ProcessEvent(event);
 }
 
 void TetrisGame::OnDestroy()
 {
 }
 
-void TetrisGame::SpawnShape()
-{
-    int index = m_nextFigureIndex == -1 ? rand() % tetris_config::figure_count : m_nextFigureIndex;
-
-    m_nextFigureIndex = rand() % tetris_config::figure_count;
-
-    //Spawn Current Piece
-    m_currentShape = Tetromino(index, Vector2i(columns / 2 - 1, -1), m_texture);
-
-    //Spawn Ghost Piece
-    m_currentGhost = Tetromino(m_currentShape);
-    m_currentGhost.SetTexture(m_texture, IntRect(tetris_config::tileSize * index, tetris_config::tileSize, tetris_config::tileSize, tetris_config::tileSize));
-    m_currentGhost.SetColor(Color(255, 255, 255, 200));
-    m_ghostPositionFound = false;
-
-    m_gameUI.SetNextShape(m_nextFigureIndex, m_texture);
-}
-
-void TetrisGame::RotateShape()
-{
-    if (!CheckCollision(m_currentShape.SimulateRotation()))
-    {
-        m_currentShape.Rotate();
-        m_currentGhost.Rotate();
-        m_ghostPositionFound = false;
-        m_rotateTimer = 0.f;
-
-        m_soundManager.PlaySound(SoundManager::Rotate);
-    }
-}
-
-void TetrisGame::MoveShape()
-{
-    //Horizontal Movement
-    if (m_input.horizontalInput != 0 && m_movementTimer > tetris_config::movement_threshold)
-    {
-        Vector2i movement(m_input.horizontalInput, 0);
-
-        if (!CheckCollision(m_currentShape.SimulateMovement(movement)))
-        {
-            m_currentShape.Move(movement);
-            m_ghostPositionFound = false;
-
-            m_soundManager.PlaySound(SoundManager::Move);
-        }
-
-        m_movementTimer = 0.f;
-    }
-
-    //Vertical Movement
-    float fallDelay = tetris_config::fall_threshold / (m_input.pressingDown ? tetris_config::fast_fall_factor : 1.f);
-    if (m_fallTimer > fallDelay)
-    {
-        Vector2i movement(0, 1);
-        if (!CheckCollision(m_currentShape.SimulateMovement(movement)))
-        {
-            m_currentShape.Move(movement);
-
-            //Play the sound only when player is pressing down.
-            if (m_input.pressingDown)
-                m_soundManager.PlaySound(SoundManager::Move);
-        }
-        else
-        {
-            PlaceShape();
-        }
-
-        m_fallTimer = 0.f;
-    }
-}
-
-//Check if the current shape fits the next movement vector.
-bool TetrisGame::CheckCollision(std::vector<Vector2i> targetPoints)
-{
-    for (int i = 0; i < 4; i++)
-    {
-        if (m_tetrisTable[targetPoints[i].y][targetPoints[i].x].isOccupied || targetPoints[i].x < 0 || targetPoints[i].x >= columns || targetPoints[i].y >= rows)
-            return true;
-    }
-    return false;
-}
-
-void TetrisGame::PlaceGhostShape()
-{
-    for (int i = 1; i < tetris_config::table_rows; i++)
-    {
-        Vector2i movement(0, i);
-        if (CheckCollision(m_currentShape.SimulateMovement(movement)))
-        {
-            m_currentGhost.SetPosition(m_currentShape.GetPosition() + movement - Vector2i(0, 1));
-            m_ghostPositionFound = true;
-            return;
-        }
-    }
-}
-
-void TetrisGame::HardDropShape()
-{
-    m_currentShape.SetPosition(m_currentGhost.GetPosition());
-    PlaceShape();
-
-    m_ghostPositionFound = false;
-    m_hardDropTimer = 0.0f;
-}
-
-
-//Clear the filled line.
-void TetrisGame::ClearLine(int lineIndex)
-{
-    //Clear the line.
-    for (int col = 0; col < columns; col++)
-    {
-        m_tetrisTable[lineIndex][col].isOccupied = false;
-        m_tetrisTable[lineIndex][col].SetColorRect(EmptyRect);
-    }
-
-    //Swap the lines above.
-    for (int i = lineIndex - 1; i >= 0; i--)
-    {
-        for (int j = 0; j < columns; j++)
-        {
-            m_tetrisTable[i + 1][j].isOccupied = m_tetrisTable[i][j].isOccupied;
-            m_tetrisTable[i + 1][j].SetColorRect(m_tetrisTable[i][j].GetColorRect());
-
-            m_tetrisTable[i][j].isOccupied = false;
-            m_tetrisTable[i][j].SetColorRect(EmptyRect);
-        }
-    }
-
-    m_score += 1;
-    m_gameUI.SetValues(m_level, m_score);
-    m_soundManager.PlaySound(SoundManager::LineClear);
-}
-
-//Place the current shape.
-void TetrisGame::PlaceShape()
-{
-    auto shapeTiles = m_currentShape.GetTiles();
-
-    for (int i = 0; i < 4; i++)
-    {
-        auto tile = shapeTiles[i];
-        m_tetrisTable[tile.GetPosition().y][tile.GetPosition().x].isOccupied = true;
-        m_tetrisTable[tile.GetPosition().y][tile.GetPosition().x].SetColorRect(tile.GetColorRect());
-    }
-
-    m_soundManager.PlaySound(SoundManager::Place);
-
-    CheckClearRows();
-
-    if(!CheckGameOver())
-        SpawnShape();
-}
-
-//Check if there are clear rows.
-void TetrisGame::CheckClearRows()
-{
-    std::vector<int> clearRows;
-
-    for (int row = 0; row < rows; row++)
-    {
-        bool rowIsClear = true;
-        for (int col = 0; col < columns; col++)
-        {
-            if (!m_tetrisTable[row][col].isOccupied)
-            {
-                rowIsClear = false;
-                break;
-            }
-        }
-
-        if (rowIsClear)
-            clearRows.push_back(row);
-    }
-
-    for (int row : clearRows) {
-        ClearLine(row);
-    }
-}
-
-bool TetrisGame::CheckGameOver()
-{
-    bool gameOver = false;
-    auto targetPoints = m_currentShape.GetPositionArray();
-
-    for (int i = 0; i < 4; i++)
-    {
-        if (targetPoints[i].y <= 0)
-            gameOver = true;
-    }
-
-    if (gameOver)
-    {
-        //TODO: Implement Game Over
-        m_isPlaying = false;
-        m_soundManager.DisposeAll();
-        m_gameOverUI.SetValues(m_level, m_score);
-        m_gameOverUI.SetVisible(true);
-        m_gameUI.SetVisible(false);
-    }
-    return gameOver;
-}
-
 void TetrisGame::OnPause()
 {
-    m_isPlaying = false;
+    m_data->stateMachine.GetActiveState()->Pause();
 }
 
 void TetrisGame::OnResume()
 {
-    m_isPlaying = true;
+    m_data->stateMachine.GetActiveState()->Resume();
 }
+
+

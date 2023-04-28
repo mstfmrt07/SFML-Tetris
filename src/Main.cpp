@@ -5,7 +5,7 @@
 int main()
 {
     //Init the window.
-    RenderWindow window(VideoMode(640, 640), tetris_config::game_title);
+    RenderWindow window(VideoMode(tetris_config::screen_width, tetris_config::screen_height), tetris_config::game_title);
     window.setFramerateLimit(60);
 
     //Set the window icon.
@@ -54,7 +54,7 @@ int main()
                 game->OnProcessEvent(event);
             }
 
-            window.clear();
+            window.clear(tetris_config::secondary_text_color);
 
             //Update the game and display it on the screen.
             game->OnUpdate(deltaTime);

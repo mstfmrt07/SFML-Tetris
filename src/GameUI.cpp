@@ -8,27 +8,27 @@ GameUI::GameUI()
 
 	//Init Next Shape Container
 	m_nextContainer = RoundedRectangleShape(Vector2f(192, 192), 16.f, 8);
-	m_nextContainer.setFillColor(tetris_config::foreground_color);
+	m_nextContainer.setFillColor(tetris_config::container_color);
 	m_nextContainer.setPosition(360, 120);
 
 	//Init Score Container
 	m_scoreContainer = RoundedRectangleShape(Vector2f(192, 88), 16.f, 8);
-	m_scoreContainer.setFillColor(tetris_config::foreground_color);
+	m_scoreContainer.setFillColor(tetris_config::container_color);
 	m_scoreContainer.setPosition(360, 388);
 
 	//Init Next Shape Title
 	m_nextText = Text("NEXT:", m_font, 20);
-	m_nextText.setFillColor(tetris_config::background_color);
+	m_nextText.setFillColor(tetris_config::secondary_text_color);
 	m_nextText.setPosition(384, 128);
 
 	//Init Level Label
 	m_levelText = Text("LEVEL: 1", m_font, 20);
-	m_levelText.setFillColor(tetris_config::background_color);
+	m_levelText.setFillColor(tetris_config::secondary_text_color);
 	m_levelText.setPosition(384, 400);
 
 	//Init Score Label
 	m_scoreText = Text("SCORE: 0", m_font, 20);
-	m_scoreText.setFillColor(tetris_config::background_color);
+	m_scoreText.setFillColor(tetris_config::secondary_text_color);
 	m_scoreText.setPosition(384, 432);
 }
 

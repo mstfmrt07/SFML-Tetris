@@ -14,6 +14,7 @@ namespace tetris_config
     const std::string assetsPath = "../../assets/";
 	const std::string texture_path = assetsPath + "tetris-tileset.png";
     const std::string icon_path = assetsPath + "game-icon.png";
+    const std::string main_bg_path = assetsPath + "tetris-main.png";
 	const std::string font_path = assetsPath + "tetris-font.ttf";
 
     const std::string line_clear_sound = assetsPath + "line-clear.wav";
@@ -21,8 +22,15 @@ namespace tetris_config
     const std::string move_sound = assetsPath + "move.wav";
     const std::string place_sound = assetsPath + "place.wav";
 
-	const sf::Color background_color = sf::Color::White;
-	const sf::Color foreground_color = sf::Color(38, 43, 57, 255);
+	const sf::Color background_color = sf::Color(132, 132, 132, 255);
+	const sf::Color container_color = sf::Color(31, 31, 31, 255);
+    const sf::Color primary_text_color = sf::Color(31, 31, 31, 255);
+    const sf::Color secondary_text_color = sf::Color(229, 229, 229, 255);
+
+
+    //Width and height of the screen.
+    const int screen_width = 640;
+    const int screen_height = 640;
 
 	//A classical tetris board consists of 20 rows and 10 columns.
 	const int table_rows = 20;
