@@ -1,3 +1,4 @@
+#pragma once
 #include "InputManager.h"
 #include "SoundManager.h"
 #include "StateMachine.h"

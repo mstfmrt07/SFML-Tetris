@@ -1,3 +1,4 @@
+#pragma once
 #include "SFML/Audio.hpp"
 #include "TetrisConfig.h"
 #include <iostream>

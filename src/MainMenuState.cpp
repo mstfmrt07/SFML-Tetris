@@ -17,6 +17,7 @@ void MainMenuState::Init()
     UI_Utility::AlignTextToCenter(m_titleText);
     m_titleText.setPosition(tetris_config::screen_width / 2.0f, 200.0f);
     m_titleText.setFillColor(tetris_config::primary_text_color);
+    m_titleText.setStyle(Text::Style::Bold);
 
     m_playText = Text("-PLAY-", m_data->assetManager.GetFont("Default_Font"), 42);
     UI_Utility::AlignTextToCenter(m_playText);
