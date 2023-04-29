@@ -266,6 +266,9 @@ void TetrisGameState::CheckClearRows()
             clearRows.push_back(row);
     }
 
+    if (clearRows.empty())
+        return;
+
     int scoreToAdd = 0;
 
     for (int i = 0; i < clearRows.size(); ++i)
