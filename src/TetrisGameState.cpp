@@ -42,6 +42,26 @@ void TetrisGameState::Update(float& deltaTime)
     if(!m_isPlaying)
         return;
 
+    if(m_isClearOnProcess)
+    {
+        m_clearTimer += deltaTime;
+
+        if(m_clearTimer >= tetris_config::line_clear_effect_duration)
+        {
+            for (int i = 0; i < m_rowsOnClearProcess.size(); ++i)
+            {
+                EndClearRow(m_rowsOnClearProcess[i]);
+                m_rowsOnClearProcess.erase(m_rowsOnClearProcess.begin() + i);
+                --i;
+            }
+
+            m_ghostPositionFound = false;
+            m_isClearOnProcess = false;
+            m_clearTimer = 0.0f;
+        }
+        return;
+    }
+
     m_movementTimer += deltaTime;
     m_fallTimer += deltaTime;
     m_rotateTimer += deltaTime;
@@ -77,9 +97,12 @@ void TetrisGameState::Render(RenderWindow& window)
         }
     }
 
-    //Draw current shape and ghost.
-    m_currentGhost.Draw(window);
-    m_currentShape.Draw(window);
+    //Draw current shape and ghost when clear effect is not on.
+    if (!m_isClearOnProcess)
+    {
+        m_currentShape.Draw(window);
+        m_currentGhost.Draw(window);
+    }
 
     //Draw UI
     m_gameUI.OnRender(window);
@@ -101,12 +124,12 @@ void TetrisGameState::SpawnShape()
     m_nextFigureIndex = RollDice();
 
     //Spawn Current Piece
-    m_currentShape = Tetromino(currentIndex, Vector2i(columns / 2 - 1, -1), m_data->assetManager.GetTexture("Tileset"));
+    m_currentShape = Tetromino(currentIndex, Vector2i((columns - 1) / 2, 0), m_data->assetManager.GetTexture("Tileset"));
 
     //Spawn Ghost Piece
     m_currentGhost = Tetromino(m_currentShape);
-    m_currentGhost.SetTexture(m_data->assetManager.GetTexture("Tileset"), IntRect(tetris_config::tileSize * currentIndex, tetris_config::tileSize, tetris_config::tileSize, tetris_config::tileSize));
-    m_currentGhost.SetColor(Color(255, 255, 255, 200));
+    const float& tileSize = tetris_config::tileSize;
+    m_currentGhost.SetColorRect( IntRect( tileSize * currentIndex, tileSize, tileSize, tileSize));
     m_ghostPositionFound = false;
 
     m_gameUI.SetNextShape(m_nextFigureIndex, m_data->assetManager.GetTexture("Tileset"));
@@ -200,13 +223,25 @@ void TetrisGameState::HardDropShape()
 }
 
 //Clear the filled line.
-void TetrisGameState::ClearRow(int lineIndex)
+void TetrisGameState::StartClearRow(int lineIndex)
 {
     //Clear the line.
     for (int col = 0; col < columns; col++)
     {
         m_tetrisTable[lineIndex][col].isOccupied = false;
-        m_tetrisTable[lineIndex][col].SetColorRect(EmptyRect);
+        m_tetrisTable[lineIndex][col].SetColorRect(tetris_config::ClearRect);
+    }
+
+    m_ghostPositionFound = false;
+    m_data->soundManager.PlaySound(SoundManager::LineClear);
+}
+
+void TetrisGameState::EndClearRow(int lineIndex)
+{
+    //Clear the line.
+    for (int col = 0; col < columns; col++)
+    {
+        m_tetrisTable[lineIndex][col].SetColorRect(tetris_config::EmptyRect);
     }
 
     //Swap the lines above.
@@ -218,11 +253,9 @@ void TetrisGameState::ClearRow(int lineIndex)
             m_tetrisTable[i + 1][j].SetColorRect(m_tetrisTable[i][j].GetColorRect());
 
             m_tetrisTable[i][j].isOccupied = false;
-            m_tetrisTable[i][j].SetColorRect(EmptyRect);
+            m_tetrisTable[i][j].SetColorRect(tetris_config::EmptyRect);
         }
     }
-
-    m_data->soundManager.PlaySound(SoundManager::LineClear);
 }
 
 //Place the current shape.
@@ -237,6 +270,8 @@ void TetrisGameState::PlaceShape()
         m_tetrisTable[tile.GetPosition().y][tile.GetPosition().x].SetColorRect(tile.GetColorRect());
     }
 
+    m_fallTimer = 0.f;
+    m_ghostPositionFound = false;
     m_data->soundManager.PlaySound(SoundManager::Place);
 
     CheckClearRows();
@@ -248,8 +283,6 @@ void TetrisGameState::PlaceShape()
 //Check if there are clear rows.
 void TetrisGameState::CheckClearRows()
 {
-    std::vector<int> clearRows;
-
     for (int row = 0; row < rows; row++)
     {
         bool rowIsClear = true;
@@ -263,21 +296,24 @@ void TetrisGameState::CheckClearRows()
         }
 
         if (rowIsClear)
-            clearRows.push_back(row);
+            m_rowsOnClearProcess.push_back(row);
     }
 
-    if (clearRows.empty())
+    if (m_rowsOnClearProcess.empty())
         return;
 
     int scoreToAdd = 0;
 
-    for (int i = 0; i < clearRows.size(); ++i)
+    m_isClearOnProcess = true;
+    m_clearTimer = 0.0f;
+
+    for (int i = 0; i < m_rowsOnClearProcess.size(); ++i)
     {
-        ClearRow(clearRows[i]);
+        StartClearRow(m_rowsOnClearProcess[i]);
         scoreToAdd += tetris_config::score_per_row * (i + 1);
     }
 
-    m_data->lines += clearRows.size();
+    m_data->lines += m_rowsOnClearProcess.size();
     m_data->level = (int)(m_data->lines / 10);
     m_data->score += scoreToAdd;
 

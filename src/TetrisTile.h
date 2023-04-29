@@ -26,11 +26,6 @@ public:
 		m_sprite = Sprite(texture, colorRect);
 	}
 
-	void SetColor(const Color& color)
-	{
-		m_sprite.setColor(color);
-	}
-
 	void SetPosition(const Vector2i& pos)
 	{
 		m_position = pos;
@@ -50,16 +45,6 @@ public:
 	Vector2i GetPosition() const
 	{
 		return m_position;
-	}
-
-	Vector2f GetScale() const
-	{
-		return m_sprite.getScale();
-	}
-
-	void SetScaleFactor(float factor)
-	{
-		m_sprite.setScale(factor, factor);
 	}
 
 	void Draw(RenderWindow& window)

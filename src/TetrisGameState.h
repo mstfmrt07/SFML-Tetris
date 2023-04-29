@@ -32,7 +32,8 @@ private:
     void PlaceShape();
     void HardDropShape();
     void CheckClearRows();
-    void ClearRow(int lineIndex);
+    void StartClearRow(int lineIndex);
+    void EndClearRow(int lineIndex);
     void PlaceGhostShape();
     int RollDice();
 
@@ -44,10 +45,14 @@ private:
 
     bool m_isPlaying = false;
 
-    float m_fallTimer = tetris_config::fall_threshold;
+    float m_fallTimer = 0.0f;
     float m_movementTimer = tetris_config::movement_threshold;
     float m_rotateTimer = tetris_config::rotate_threshold;
     float m_hardDropTimer = tetris_config::hard_drop_threshold;
+
+    float m_clearTimer = 0.0f;
+    bool m_isClearOnProcess = false;
+    std::vector<int> m_rowsOnClearProcess;
 
     Tetromino m_currentShape;
     Tetromino m_currentGhost;

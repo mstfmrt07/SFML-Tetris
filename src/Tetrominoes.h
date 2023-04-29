@@ -106,13 +106,13 @@ struct Tetromino
 		}
 	}
 
-	void SetColor(const Color& color)
-	{
-		for (int i = 0; i < 4; i++)
-		{
-			m_tiles[i].SetColor(color);
-		}
-	}
+    void SetColorRect(const IntRect& colorRect)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            m_tiles[i].SetColorRect(colorRect);
+        }
+    }
 
 	void Draw(RenderWindow& window)
 	{
