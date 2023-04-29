@@ -9,13 +9,14 @@ struct Tetromino
 	Tetromino(const int& figureIndex, const Vector2i& position, const Texture& texture)
 	{
 		m_figure = tetris_config::Figures[figureIndex];
+        const float& tileSize = tetris_config::tileSize;
 		m_position = position;
 
 		//Create tiles.
 		for (int i = 0; i < 4; i++)
 		{
-			Vector2i tilePos(position.x + (m_figure.points[i] % 2), position.y + (m_figure.points[i] / 2));
-			m_tiles[i] = TetrisTile(tilePos, texture, IntRect(tetris_config::tileSize * figureIndex, 0, tetris_config::tileSize, tetris_config::tileSize));
+			Vector2i tilePos(position.x + (m_figure.points[i] % 4), position.y + (m_figure.points[i] / 4));
+			m_tiles[i] = TetrisTile(tilePos, texture, IntRect(tileSize * figureIndex, 0, tileSize, tileSize));
 		}
 	}
 
@@ -51,7 +52,7 @@ struct Tetromino
 
     std::vector<Vector2i> SimulateRotation()
 	{
-		Vector2i origin = m_tiles[1].GetPosition();
+		Vector2i origin = m_tiles[2].GetPosition();
         std::vector<Vector2i> points;
 		for (int i = 0; i < 4; i++)
 		{

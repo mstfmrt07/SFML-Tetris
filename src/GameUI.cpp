@@ -67,7 +67,7 @@ void GameUI::OnRender(RenderWindow& window)
 
 void GameUI::SetNextShape(int nextFigureIndex, Texture& texture)
 {
-	m_nextShape = Tetromino(nextFigureIndex, Vector2i(13, 2), texture);
+	m_nextShape = Tetromino(nextFigureIndex, Vector2i(13, 3), texture);
 }
 
 void GameUI::SetValues(GameDataRef gameData)

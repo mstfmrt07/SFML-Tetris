@@ -29,7 +29,7 @@ void TetrisGameState::Init()
     {
         for (int j = 0; j < columns; j++)
         {
-            m_tetrisTable[i][j] = TetrisTile(Vector2i(j, i), m_data->assetManager.GetTexture("Tileset"), EmptyRect);
+            m_tetrisTable[i][j] = TetrisTile(Vector2i(j, i), m_data->assetManager.GetTexture("Tileset"), tetris_config::EmptyRect);
         }
     }
 

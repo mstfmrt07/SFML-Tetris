@@ -2,8 +2,6 @@
 #include "Game.h"
 #include "TetrisConfig.h"
 
-const IntRect EmptyRect = IntRect(224, 0, 32, 32);
-
 struct TetrisTile
 {
 public:
