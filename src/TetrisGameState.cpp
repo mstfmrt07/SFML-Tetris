@@ -13,7 +13,7 @@ void TetrisGameState::Init()
 
     //Init variables
     m_data->level = 0;
-    m_data->score = 0;
+    m_data->lines = 0;
     m_nextFigureIndex = -1;
     m_ghostPositionFound = false;
 
@@ -22,7 +22,7 @@ void TetrisGameState::Init()
 
     //Set UI visibility
     m_gameUI.SetVisible(true);
-    m_gameUI.SetValues(m_data->level, m_data->score);
+    m_gameUI.SetValues(m_data);
 
     //Init table
     for (int i = 0; i < rows; i++)
@@ -38,6 +38,7 @@ void TetrisGameState::Init()
 
 void TetrisGameState::Update(float& deltaTime)
 {
+    //If game is not playing, return.
     if(!m_isPlaying)
         return;
 
@@ -221,10 +222,6 @@ void TetrisGameState::ClearRow(int lineIndex)
         }
     }
 
-    m_data->score += 1;
-    m_data->level = (int)(m_data->score / 10);
-
-    m_gameUI.SetValues(m_data->level, m_data->score);
     m_data->soundManager.PlaySound(SoundManager::LineClear);
 }
 
@@ -269,9 +266,19 @@ void TetrisGameState::CheckClearRows()
             clearRows.push_back(row);
     }
 
-    for (int row : clearRows) {
-        ClearRow(row);
+    int scoreToAdd = 0;
+
+    for (int i = 0; i < clearRows.size(); ++i)
+    {
+        ClearRow(clearRows[i]);
+        scoreToAdd += tetris_config::score_per_row * (i + 1);
     }
+
+    m_data->lines += clearRows.size();
+    m_data->level = (int)(m_data->lines / 10);
+    m_data->score += scoreToAdd;
+
+    m_gameUI.SetValues(m_data);
 }
 
 bool TetrisGameState::CheckGameOver()

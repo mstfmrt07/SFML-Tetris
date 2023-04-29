@@ -56,6 +56,8 @@ namespace tetris_config
 
 	const int figure_count = 7;
 
+    const int score_per_row = 100;
+
 	//Point indexes indicate the values from 0 (Top-Left) to 7 (Bottom-Right) in the 2x4 grid.
 	const Figure Figures[figure_count] =
 	{

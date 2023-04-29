@@ -16,6 +16,7 @@ private:
 
     Text m_gameOverText;
     Text m_levelText;
+    Text m_linesText;
     Text m_scoreText;
     Text m_menuText;
     Text m_playAgainText;

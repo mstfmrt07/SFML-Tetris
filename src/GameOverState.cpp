@@ -14,20 +14,26 @@ void GameOverState::Init()
     //Init Title
     m_gameOverText = Text("GAME OVER!", m_data->assetManager.GetFont("Default_Font"), 54);
     UI_Utility::AlignTextToCenter(m_gameOverText);
-    m_gameOverText.setPosition(tetris_config::screen_width / 2.0f, 140);
+    m_gameOverText.setPosition(tetris_config::screen_width / 2.0f, 180);
     m_gameOverText.setFillColor(tetris_config::primary_text_color);
     m_gameOverText.setStyle(Text::Style::Bold);
 
     //Init Level Label
     m_levelText = Text("LEVEL: " + std::to_string(m_data->level), m_data->assetManager.GetFont("Default_Font"), 32);
     UI_Utility::AlignTextToCenter(m_levelText);
-    m_levelText.setPosition(tetris_config::screen_width / 2.0f, 220);
+    m_levelText.setPosition(tetris_config::screen_width / 2.0f, 240);
     m_levelText.setFillColor(tetris_config::primary_text_color);
+
+    //Init Lines Label
+    m_linesText = Text("LINES: " + std::to_string(m_data->lines), m_data->assetManager.GetFont("Default_Font"), 32);
+    UI_Utility::AlignTextToCenter(m_linesText);
+    m_linesText.setPosition(tetris_config::screen_width / 2.0f, 280);
+    m_linesText.setFillColor(tetris_config::primary_text_color);
 
     //Init Score Label
     m_scoreText = Text("SCORE: " + std::to_string(m_data->score), m_data->assetManager.GetFont("Default_Font"), 32);
     UI_Utility::AlignTextToCenter(m_scoreText);
-    m_scoreText.setPosition(tetris_config::screen_width / 2.0f, 260);
+    m_scoreText.setPosition(tetris_config::screen_width / 2.0f, 320);
     m_scoreText.setFillColor(tetris_config::primary_text_color);
 
     m_playAgainText = Text("-PLAY AGAIN-", m_data->assetManager.GetFont("Default_Font"), 36);
@@ -51,6 +57,7 @@ void GameOverState::Render(sf::RenderWindow &window)
     window.draw(m_gameOverText);
     window.draw(m_scoreText);
     window.draw(m_levelText);
+    window.draw(m_linesText);
     window.draw(m_playAgainText);
     window.draw(m_menuText);
 
