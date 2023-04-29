@@ -1,3 +1,4 @@
+#include <random>
 #include "TetrisGameState.h"
 #include "GameOverState.h"
 
@@ -89,16 +90,21 @@ void TetrisGameState::ProcessEvent(Event& event)
 
 void TetrisGameState::SpawnShape()
 {
-    int index = m_nextFigureIndex == -1 ? rand() % tetris_config::figure_count : m_nextFigureIndex;
+    int currentIndex = -1;
+    //If next figure hasn't been set yet.
+    if (m_nextFigureIndex == -1)
+        currentIndex = RollDice();
+    else
+        currentIndex = m_nextFigureIndex;
 
-    m_nextFigureIndex = rand() % tetris_config::figure_count;
+    m_nextFigureIndex = RollDice();
 
     //Spawn Current Piece
-    m_currentShape = Tetromino(index, Vector2i(columns / 2 - 1, -1), m_data->assetManager.GetTexture("Tileset"));
+    m_currentShape = Tetromino(currentIndex, Vector2i(columns / 2 - 1, -1), m_data->assetManager.GetTexture("Tileset"));
 
     //Spawn Ghost Piece
     m_currentGhost = Tetromino(m_currentShape);
-    m_currentGhost.SetTexture(m_data->assetManager.GetTexture("Tileset"), IntRect(tetris_config::tileSize * index, tetris_config::tileSize, tetris_config::tileSize, tetris_config::tileSize));
+    m_currentGhost.SetTexture(m_data->assetManager.GetTexture("Tileset"), IntRect(tetris_config::tileSize * currentIndex, tetris_config::tileSize, tetris_config::tileSize, tetris_config::tileSize));
     m_currentGhost.SetColor(Color(255, 255, 255, 200));
     m_ghostPositionFound = false;
 
@@ -193,7 +199,7 @@ void TetrisGameState::HardDropShape()
 }
 
 //Clear the filled line.
-void TetrisGameState::ClearLine(int lineIndex)
+void TetrisGameState::ClearRow(int lineIndex)
 {
     //Clear the line.
     for (int col = 0; col < columns; col++)
@@ -216,6 +222,8 @@ void TetrisGameState::ClearLine(int lineIndex)
     }
 
     m_data->score += 1;
+    m_data->level = (int)(m_data->score / 10);
+
     m_gameUI.SetValues(m_data->level, m_data->score);
     m_data->soundManager.PlaySound(SoundManager::LineClear);
 }
@@ -262,7 +270,7 @@ void TetrisGameState::CheckClearRows()
     }
 
     for (int row : clearRows) {
-        ClearLine(row);
+        ClearRow(row);
     }
 }
 
@@ -296,4 +304,21 @@ void TetrisGameState::Pause ()
 void TetrisGameState::Resume()
 {
     m_isPlaying = true;
+}
+
+int TetrisGameState::RollDice()
+{
+    int number = -1;
+    if (m_figuresBag.empty())
+    {
+        for (int i = 0; i < tetris_config::figure_count; ++i)
+        {
+            m_figuresBag.push_back(i);
+        }
+        std::shuffle(m_figuresBag.begin(), m_figuresBag.end(), std::mt19937(std::random_device()()));
+    }
+    number = m_figuresBag.back();
+    m_figuresBag.pop_back();
+
+    return number;
 }

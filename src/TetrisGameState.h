@@ -32,8 +32,9 @@ private:
     void PlaceShape();
     void HardDropShape();
     void CheckClearRows();
-    void ClearLine(int lineIndex);
+    void ClearRow(int lineIndex);
     void PlaceGhostShape();
+    int RollDice();
 
     GameDataRef m_data;
 
@@ -53,4 +54,5 @@ private:
     bool m_ghostPositionFound = false;
 
     int m_nextFigureIndex = -1;
+    std::vector<int> m_figuresBag; // Used to randomly pick the next figure.
 };

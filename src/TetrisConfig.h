@@ -43,7 +43,7 @@ namespace tetris_config
 	const float movement_threshold = 0.1f;
 
 	//Amount of time for a tetris piece to move one block down. (Seconds)
-	const float fall_threshold = 0.6f;
+	const float fall_threshold = 0.8f;
 
 	//Amount of time between two consecutive rotates. (Seconds)
 	const float rotate_threshold = 0.2f;
@@ -52,7 +52,7 @@ namespace tetris_config
     const float hard_drop_threshold = 0.4f;
 
 	//Defines how fast will a tetris piece would fall when the "soft drop" key is pressed.
-	const float fast_fall_factor = 15.f;
+	const float fast_fall_factor = 8.f;
 
 	const int figure_count = 7;
 
