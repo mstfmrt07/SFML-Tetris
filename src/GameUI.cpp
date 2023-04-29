@@ -19,32 +19,31 @@ GameUI::GameUI()
     //Init Level Container
     m_levelContainer = RoundedRectangleShape(Vector2f(192, 88), 16.f, 8);
     m_levelContainer.setFillColor(tetris_config::container_color);
-    m_levelContainer.setPosition(360, 256);
+    m_levelContainer.setPosition(360, 252);
 
     //Init Lines Container
-    m_linesContainer = RoundedRectangleShape(Vector2f(192, 88), 16.f, 8);
-    m_linesContainer.setFillColor(tetris_config::container_color);
-    m_linesContainer.setPosition(360, 370);
+    m_linesContainer = RoundedRectangleShape(m_levelContainer);
+    m_linesContainer.setPosition(360, 372);
 
 	//Init Score Container
-	m_scoreContainer = RoundedRectangleShape(Vector2f(192, 88), 16.f, 8);
-	m_scoreContainer.setFillColor(tetris_config::container_color);
-	m_scoreContainer.setPosition(360, 504);
+	m_scoreContainer = RoundedRectangleShape(m_levelContainer);
+	m_scoreContainer.setPosition(360, 492);
 
     //Init Level Label
-    m_levelText = Text("LEVEL: 1", m_font, 24);
+    m_levelText = Text("LEVEL: 0", m_font, 24);
     m_levelText.setFillColor(tetris_config::secondary_text_color);
-    m_levelText.setPosition(384, 280);
+    m_levelText.setLineSpacing(1.2f);
+    m_levelText.setPosition(384, 264);
 
     //Init Lines Label
-    m_linesText = Text("SCORE: 0", m_font, 24);
-    m_linesText.setFillColor(tetris_config::secondary_text_color);
-    m_linesText.setPosition(384, 408);
+    m_linesText = Text(m_levelText);
+    m_linesText.setString("LINES: 0");
+    m_linesText.setPosition(384, 384);
 
     //Init Score Label
-    m_scoreText = Text("SCORE: 0", m_font, 24);
-    m_scoreText.setFillColor(tetris_config::secondary_text_color);
-    m_scoreText.setPosition(384, 532);
+    m_scoreText = Text(m_levelText);
+    m_scoreText.setString("SCORE: 0");
+    m_scoreText.setPosition(384, 504);
 }
 
 GameUI::~GameUI() = default;
@@ -73,7 +72,7 @@ void GameUI::SetNextShape(int nextFigureIndex, Texture& texture)
 
 void GameUI::SetValues(GameDataRef gameData)
 {
-    m_levelText.setString("LEVEL: " + std::to_string(gameData->level));
-    m_linesText.setString("LINES: " + std::to_string(gameData->lines));
-    m_scoreText.setString("SCORE: " + std::to_string(gameData->score));
+    m_levelText.setString("LEVEL: \n" + std::to_string(gameData->level));
+    m_linesText.setString("LINES: \n" + std::to_string(gameData->lines));
+    m_scoreText.setString("SCORE: \n" + std::to_string(gameData->score));
 }
