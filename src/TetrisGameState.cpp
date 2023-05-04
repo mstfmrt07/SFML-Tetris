@@ -14,6 +14,7 @@ void TetrisGameState::Init()
     //Init variables
     m_data->level = 0;
     m_data->lines = 0;
+    m_data->score = 0;
     m_nextFigureIndex = -1;
     m_ghostPositionFound = false;
 
@@ -100,8 +101,8 @@ void TetrisGameState::Render(RenderWindow& window)
     //Draw current shape and ghost when clear effect is not on.
     if (!m_isClearOnProcess)
     {
-        m_currentShape.Draw(window);
         m_currentGhost.Draw(window);
+        m_currentShape.Draw(window);
     }
 
     //Draw UI
@@ -124,11 +125,11 @@ void TetrisGameState::SpawnShape()
     m_nextFigureIndex = RollDice();
 
     //Spawn Current Piece
-    m_currentShape = Tetromino(currentIndex, Vector2i((columns - 1) / 2, 0), m_data->assetManager.GetTexture("Tileset"));
+    m_currentShape = Tetromino(currentIndex, Vector2i((columns - 1) / 2 - 1, 0), m_data->assetManager.GetTexture("Tileset"));
 
     //Spawn Ghost Piece
     m_currentGhost = Tetromino(m_currentShape);
-    const float& tileSize = tetris_config::tileSize;
+    const int& tileSize = tetris_config::tileSize;
     m_currentGhost.SetColorRect( IntRect( tileSize * currentIndex, tileSize, tileSize, tileSize));
     m_ghostPositionFound = false;
 
@@ -167,7 +168,8 @@ void TetrisGameState::MoveShape()
     }
 
     //Vertical Movement
-    float fallDelay = tetris_config::fall_threshold / (m_data->input.pressingDown ? tetris_config::fast_fall_factor : 1.f);
+    float fallDelay = m_fallThresholdByLevel / (m_data->input.pressingDown ? tetris_config::fast_fall_factor : 1.f);
+
     if (m_fallTimer > fallDelay)
     {
         Vector2i movement(0, 1);
@@ -314,9 +316,15 @@ void TetrisGameState::CheckClearRows()
     }
 
     m_data->lines += m_rowsOnClearProcess.size();
-    m_data->level = (int)(m_data->lines / 10);
     m_data->score += scoreToAdd;
 
+    int level = (int)(m_data->lines / 10);
+    if(level > m_data->level)
+    {
+        //Update Game Level
+        m_data->level = level;
+        m_fallThresholdByLevel = pow(tetris_config::fall_threshold - (m_data->level * 0.007), m_data->level);
+    }
     m_gameUI.SetValues(m_data);
 }
 
@@ -333,7 +341,6 @@ bool TetrisGameState::CheckGameOver()
 
     if (gameOver)
     {
-        //TODO: Implement Game Over
         m_isPlaying = false;
         m_data->soundManager.DisposeAll();
         m_gameUI.SetVisible(false);
@@ -342,7 +349,7 @@ bool TetrisGameState::CheckGameOver()
     return gameOver;
 }
 
-void TetrisGameState::Pause ()
+void TetrisGameState::Pause()
 {
     m_isPlaying = false;
 }

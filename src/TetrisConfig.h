@@ -40,7 +40,7 @@ namespace tetris_config
 	const int table_columns = 10;
 
 	//Size of an individual tile (in pixels)
-	const float tileSize = 32.0f;
+	const int tileSize = 32;
 
 	//Time between two consecutive moves on the horizontal axis. (Seconds)
 	const float movement_threshold = 0.1f;

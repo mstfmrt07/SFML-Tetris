@@ -50,6 +50,8 @@ private:
     float m_rotateTimer = tetris_config::rotate_threshold;
     float m_hardDropTimer = tetris_config::hard_drop_threshold;
 
+    float m_fallThresholdByLevel = tetris_config::fall_threshold;
+
     float m_clearTimer = 0.0f;
     bool m_isClearOnProcess = false;
     std::vector<int> m_rowsOnClearProcess;

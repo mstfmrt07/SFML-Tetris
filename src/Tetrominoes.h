@@ -9,7 +9,7 @@ struct Tetromino
 	Tetromino(const int& figureIndex, const Vector2i& position, const Texture& texture)
 	{
 		m_figure = tetris_config::Figures[figureIndex];
-        const float& tileSize = tetris_config::tileSize;
+        const int& tileSize = tetris_config::tileSize;
 		m_position = position;
 
 		//Create tiles.
