@@ -2,7 +2,7 @@
 #include "TetrisConfig.h"
 #include "Tetrominoes.h"
 #include "GameData.h"
-#include "GameUI.h"
+#include "RoundedRectangleShape.hpp"
 
 using namespace sf;
 
@@ -36,12 +36,16 @@ private:
     void EndClearRow(int lineIndex);
     void PlaceGhostShape();
     int RollDice();
+    void InitUI();
+    void UpdateUI();
 
     GameDataRef m_data;
 
-    GameUI m_gameUI;
-
     TetrisTile m_tetrisTable[rows][columns];
+
+    Tetromino m_currentShape;
+    Tetromino m_currentGhost;
+    Tetromino m_nextShape;
 
     bool m_isPlaying = false;
 
@@ -56,10 +60,18 @@ private:
     bool m_isClearOnProcess = false;
     std::vector<int> m_rowsOnClearProcess;
 
-    Tetromino m_currentShape;
-    Tetromino m_currentGhost;
     bool m_ghostPositionFound = false;
 
     int m_nextFigureIndex = -1;
     std::vector<int> m_figuresBag; // Used to randomly pick the next figure.
+
+    //UI
+    RoundedRectangleShape m_nextContainer;
+    RoundedRectangleShape m_scoreContainer;
+    RoundedRectangleShape m_levelContainer;
+    RoundedRectangleShape m_linesContainer;
+    Text m_nextText;
+    Text m_levelText;
+    Text m_scoreText;
+    Text m_linesText;
 };

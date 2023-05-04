@@ -9,10 +9,14 @@ public:
 	void OnProcessEvent(Event& event)
 	{
         //Keyboard events
-        if (event.type == Event::KeyPressed)
-            HandleKeyPressed(event.key.code);
-        else if(event.type == Event::KeyReleased)
-            HandleKeyReleased(event.key.code);
+        switch (event.type) {
+            case Event::KeyPressed:
+                HandleKeyPressed(event.key.code);
+                break;
+            case Event::KeyReleased:
+                HandleKeyReleased(event.key.code);
+                break;
+        }
 	}
 
     bool IsTextClicked(sf::Text& text, sf::RenderWindow& window )

@@ -21,9 +21,9 @@ void TetrisGameState::Init()
     //Load texture from asset path.
     m_data->assetManager.LoadTexture("Tileset", tetris_config::texture_path);
 
-    //Set UI visibility
-    m_gameUI.SetVisible(true);
-    m_gameUI.SetValues(m_data);
+    //Init UI
+    InitUI();
+    UpdateUI();
 
     //Init table
     for (int i = 0; i < rows; i++)
@@ -106,7 +106,16 @@ void TetrisGameState::Render(RenderWindow& window)
     }
 
     //Draw UI
-    m_gameUI.OnRender(window);
+    window.draw(m_nextContainer);
+    window.draw(m_nextText);
+    window.draw(m_scoreContainer);
+    window.draw(m_scoreText);
+    window.draw(m_levelContainer);
+    window.draw(m_levelText);
+    window.draw(m_linesContainer);
+    window.draw(m_linesText);
+
+    m_nextShape.Draw(window);
 }
 
 void TetrisGameState::ProcessEvent(Event& event)
@@ -116,16 +125,22 @@ void TetrisGameState::ProcessEvent(Event& event)
 void TetrisGameState::SpawnShape()
 {
     int currentIndex = -1;
+    Vector2i spawnPos = Vector2i((columns - 1) / 2 - 1, 0);
     //If next figure hasn't been set yet.
     if (m_nextFigureIndex == -1)
+    {
         currentIndex = RollDice();
+        m_currentShape = Tetromino(currentIndex, spawnPos, m_data->assetManager.GetTexture("Tileset"));
+    }
     else
+    {
+        //Spawn Current Piece
         currentIndex = m_nextFigureIndex;
+        m_currentShape = Tetromino(m_nextShape);
+        m_currentShape.SetPosition(spawnPos);
+    }
 
     m_nextFigureIndex = RollDice();
-
-    //Spawn Current Piece
-    m_currentShape = Tetromino(currentIndex, Vector2i((columns - 1) / 2 - 1, 0), m_data->assetManager.GetTexture("Tileset"));
 
     //Spawn Ghost Piece
     m_currentGhost = Tetromino(m_currentShape);
@@ -133,7 +148,7 @@ void TetrisGameState::SpawnShape()
     m_currentGhost.SetColorRect( IntRect( tileSize * currentIndex, tileSize, tileSize, tileSize));
     m_ghostPositionFound = false;
 
-    m_gameUI.SetNextShape(m_nextFigureIndex, m_data->assetManager.GetTexture("Tileset"));
+    m_nextShape = Tetromino(m_nextFigureIndex, Vector2i(12, 3), m_data->assetManager.GetTexture("Tileset"));
 }
 
 void TetrisGameState::RotateShape()
@@ -325,7 +340,7 @@ void TetrisGameState::CheckClearRows()
         m_data->level = level;
         m_fallThresholdByLevel = pow(tetris_config::fall_threshold - (m_data->level * 0.007), m_data->level);
     }
-    m_gameUI.SetValues(m_data);
+    UpdateUI();
 }
 
 bool TetrisGameState::CheckGameOver()
@@ -343,7 +358,6 @@ bool TetrisGameState::CheckGameOver()
     {
         m_isPlaying = false;
         m_data->soundManager.DisposeAll();
-        m_gameUI.SetVisible(false);
         m_data->stateMachine.AddState(std::make_unique<GameOverState>(m_data), true);
     }
     return gameOver;
@@ -374,4 +388,53 @@ int TetrisGameState::RollDice()
     m_figuresBag.pop_back();
 
     return number;
+}
+
+void TetrisGameState::InitUI()
+{
+    //Init Next Shape Container
+    m_nextContainer = RoundedRectangleShape(Vector2f(192, 192), 16.f, 8);
+    m_nextContainer.setFillColor(tetris_config::container_color);
+    m_nextContainer.setPosition(352, 28);
+
+    //Init Next Shape Title
+    m_nextText = Text("NEXT:", m_data->assetManager.GetFont("Default_Font"), 24);
+    m_nextText.setFillColor(tetris_config::secondary_text_color);
+    m_nextText.setPosition(372, 36);
+
+    //Init Level Container
+    m_levelContainer = RoundedRectangleShape(Vector2f(192, 88), 16.f, 8);
+    m_levelContainer.setFillColor(tetris_config::container_color);
+    m_levelContainer.setPosition(352, 252);
+
+    //Init Lines Container
+    m_linesContainer = RoundedRectangleShape(m_levelContainer);
+    m_linesContainer.setPosition(352, 372);
+
+    //Init Score Container
+    m_scoreContainer = RoundedRectangleShape(m_levelContainer);
+    m_scoreContainer.setPosition(352, 492);
+
+    //Init Level Label
+    m_levelText = Text("LEVEL: 0", m_data->assetManager.GetFont("Default_Font"), 24);
+    m_levelText.setFillColor(tetris_config::secondary_text_color);
+    m_levelText.setLineSpacing(1.2f);
+    m_levelText.setPosition(372, 264);
+
+    //Init Lines Label
+    m_linesText = Text(m_levelText);
+    m_linesText.setString("LINES: 0");
+    m_linesText.setPosition(372, 384);
+
+    //Init Score Label
+    m_scoreText = Text(m_levelText);
+    m_scoreText.setString("SCORE: 0");
+    m_scoreText.setPosition(372, 504);
+}
+
+void TetrisGameState::UpdateUI()
+{
+    m_levelText.setString("LEVEL: \n" + std::to_string(m_data->level + 1));
+    m_linesText.setString("LINES: \n" + std::to_string(m_data->lines));
+    m_scoreText.setString("SCORE: \n" + std::to_string(m_data->score));
 }
