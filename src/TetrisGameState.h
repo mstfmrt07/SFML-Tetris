@@ -36,8 +36,10 @@ private:
     void EndClearRow(int lineIndex);
     void PlaceGhostShape();
     int RollDice();
+
     void InitUI();
     void UpdateUI();
+    void RenderUI(RenderWindow& window);
 
     GameDataRef m_data;
 
@@ -70,8 +72,11 @@ private:
     RoundedRectangleShape m_scoreContainer;
     RoundedRectangleShape m_levelContainer;
     RoundedRectangleShape m_linesContainer;
+    RoundedRectangleShape m_pauseContainer;
+    RectangleShape m_pauseOverlay;
     Text m_nextText;
     Text m_levelText;
     Text m_scoreText;
     Text m_linesText;
+    Text m_pauseText;
 };

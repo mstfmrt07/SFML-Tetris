@@ -106,16 +106,7 @@ void TetrisGameState::Render(RenderWindow& window)
     }
 
     //Draw UI
-    window.draw(m_nextContainer);
-    window.draw(m_nextText);
-    window.draw(m_scoreContainer);
-    window.draw(m_scoreText);
-    window.draw(m_levelContainer);
-    window.draw(m_levelText);
-    window.draw(m_linesContainer);
-    window.draw(m_linesText);
-
-    m_nextShape.Draw(window);
+    RenderUI(window);
 }
 
 void TetrisGameState::ProcessEvent(Event& event)
@@ -392,6 +383,9 @@ int TetrisGameState::RollDice()
 
 void TetrisGameState::InitUI()
 {
+    Vector2f containerSize = Vector2f(192, 88);
+    float spacing = 12.0f;
+
     //Init Next Shape Container
     m_nextContainer = RoundedRectangleShape(Vector2f(192, 192), 16.f, 8);
     m_nextContainer.setFillColor(tetris_config::container_color);
@@ -403,33 +397,49 @@ void TetrisGameState::InitUI()
     m_nextText.setPosition(372, 36);
 
     //Init Level Container
-    m_levelContainer = RoundedRectangleShape(Vector2f(192, 88), 16.f, 8);
+    m_levelContainer = RoundedRectangleShape(containerSize, 16.f, 8);
     m_levelContainer.setFillColor(tetris_config::container_color);
-    m_levelContainer.setPosition(352, 252);
-
-    //Init Lines Container
-    m_linesContainer = RoundedRectangleShape(m_levelContainer);
-    m_linesContainer.setPosition(352, 372);
-
-    //Init Score Container
-    m_scoreContainer = RoundedRectangleShape(m_levelContainer);
-    m_scoreContainer.setPosition(352, 492);
+    m_levelContainer.setPosition(352, 240);
 
     //Init Level Label
     m_levelText = Text("LEVEL: 0", m_data->assetManager.GetFont("Default_Font"), 24);
     m_levelText.setFillColor(tetris_config::secondary_text_color);
     m_levelText.setLineSpacing(1.2f);
-    m_levelText.setPosition(372, 264);
+    m_levelText.setPosition(372, 252);
+
+    //Init Lines Container
+    m_linesContainer = RoundedRectangleShape(m_levelContainer);
+    m_linesContainer.setPosition(352, 348);
 
     //Init Lines Label
     m_linesText = Text(m_levelText);
     m_linesText.setString("LINES: 0");
-    m_linesText.setPosition(372, 384);
+    m_linesText.setPosition(372, 360);
+
+    //Init Score Container
+    m_scoreContainer = RoundedRectangleShape(m_levelContainer);
+    m_scoreContainer.setPosition(352, 456);
 
     //Init Score Label
     m_scoreText = Text(m_levelText);
     m_scoreText.setString("SCORE: 0");
-    m_scoreText.setPosition(372, 504);
+    m_scoreText.setPosition(372, 468);
+
+    m_pauseOverlay = RectangleShape(Vector2f(tetris_config::screen_width, tetris_config::screen_height));
+    m_pauseOverlay.setPosition(0, 0);
+    Color overlayColor(tetris_config::container_color);
+    overlayColor.a = 160;
+    m_pauseOverlay.setFillColor(overlayColor);
+
+    //Init Pause Container
+    m_pauseContainer = RoundedRectangleShape(m_levelContainer);
+    m_pauseContainer.setSize(Vector2f(192.0f, 44.0f));
+    m_pauseContainer.setPosition(352, 564);
+
+    //Init Pause Label
+    m_pauseText = Text(m_levelText);
+    m_pauseText.setString("|| PAUSE");
+    m_pauseText.setPosition(372, 572);
 }
 
 void TetrisGameState::UpdateUI()
@@ -437,4 +447,39 @@ void TetrisGameState::UpdateUI()
     m_levelText.setString("LEVEL: \n" + std::to_string(m_data->level + 1));
     m_linesText.setString("LINES: \n" + std::to_string(m_data->lines));
     m_scoreText.setString("SCORE: \n" + std::to_string(m_data->score));
+}
+
+void TetrisGameState::RenderUI(RenderWindow& window)
+{
+    if(!m_isPlaying)
+        window.draw(m_pauseOverlay);
+
+    window.draw(m_nextContainer);
+    window.draw(m_nextText);
+    window.draw(m_scoreContainer);
+    window.draw(m_scoreText);
+    window.draw(m_levelContainer);
+    window.draw(m_levelText);
+    window.draw(m_linesContainer);
+    window.draw(m_linesText);
+    window.draw(m_pauseContainer);
+    window.draw(m_pauseText);
+
+    m_nextShape.Draw(window);
+
+    if(m_data->input.IsTextClicked(m_pauseText, window))
+    {
+        if(m_isPlaying)
+        {
+            std::cout << "Clicked on Pause!" << std::endl;
+            m_pauseText.setString("> RESUME");
+            m_isPlaying = false;
+        }
+        else
+        {
+            std::cout << "Clicked on Resume!" << std::endl;
+            m_pauseText.setString("|| PAUSE");
+            m_isPlaying = true;
+        }
+    }
 }

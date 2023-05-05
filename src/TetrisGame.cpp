@@ -37,5 +37,3 @@ void TetrisGame::OnResume()
 {
     m_data->stateMachine.GetActiveState()->Resume();
 }
-
-
