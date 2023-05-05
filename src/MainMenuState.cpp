@@ -19,15 +19,12 @@ void MainMenuState::Init()
     m_titleText.setFillColor(tetris_config::primary_text_color);
     m_titleText.setStyle(Text::Style::Bold);
 
-    UI_Utility::AlignTextToCenter(m_playText);
-    m_playText.setPosition(tetris_config::screen_width / 2.0f, 360.0f);
-    m_playText.setFillColor(tetris_config::primary_text_color);
-    m_playText = Text("-PLAY-", AssetManager::GetInstance()->GetFont("Default_Font"), 42);
+    m_playButton = Button("PLAY", AssetManager::GetInstance()->GetFont("Default_Font"), Vector2f(tetris_config::screen_width / 2.0f, 360.0f), Vector2f(192.f, 64.f));
+    m_playButton.SetFontSize(42);
 
-    UI_Utility::AlignTextToCenter(m_quitText);
-    m_quitText.setPosition(tetris_config::screen_width / 2.0f, 440.0f);
-    m_quitText.setFillColor(tetris_config::primary_text_color);
-    m_quitText = Text("-QUIR-", AssetManager::GetInstance()->GetFont("Default_Font"), 42);
+    m_quitButton = Button(m_playButton);
+    m_quitButton.SetPosition(Vector2f(tetris_config::screen_width / 2.0f, 440.0f));
+    m_quitButton.SetLabel("QUIT");
 }
 
 void MainMenuState::Update(float &deltaTime)
@@ -38,18 +35,22 @@ void MainMenuState::Render(RenderWindow &window)
 {
     window.draw(m_mainBG);
     window.draw(m_titleText);
-    window.draw(m_playText);
-    window.draw(m_quitText);
+    m_playButton.Draw(window);
+    m_quitButton.Draw(window);
+}
 
-    if(m_data->input.IsTextClicked(m_playText, window))
+void MainMenuState::ProcessEvent(Event &event)
+{
+    State::ProcessEvent(event);
+    if(m_playButton.IsClicked(event))
     {
         std::cout << "Clicked on Play Game!" << std::endl;
         m_data->stateMachine.AddState(std::make_unique<TetrisGameState>(m_data), false);
     }
 
-    if(m_data->input.IsTextClicked(m_quitText, window))
+    if(m_quitButton.IsClicked(event))
     {
+        //TODO: Quit Game
         std::cout << "Clicked on Quit Game!" << std::endl;
-        window.close();
     }
 }

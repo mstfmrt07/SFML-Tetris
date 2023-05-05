@@ -1,3 +1,4 @@
+#pragma once
 #include <SFML/Graphics.hpp>
 #include "RoundedRectangleShape.hpp"
 #include "TetrisConfig.h"

@@ -37,15 +37,12 @@ void GameOverState::Init()
     m_scoreText.setPosition(tetris_config::screen_width / 2.0f, 320);
     m_scoreText.setFillColor(tetris_config::primary_text_color);
 
-    m_playAgainText = Text("-PLAY AGAIN-", AssetManager::GetInstance()->GetFont("Default_Font"), 36);
-    UI_Utility::AlignTextToCenter(m_playAgainText);
-    m_playAgainText.setPosition(tetris_config::screen_width / 2.0f, 420.0f);
-    m_playAgainText.setFillColor(tetris_config::primary_text_color);
+    m_playAgainButton = Button("PLAY AGAIN", AssetManager::GetInstance()->GetFont("Default_Font"), Vector2f(tetris_config::screen_width / 2.0f, 420.0f), Vector2f(256.f, 64.f));
+    m_playAgainButton.SetFontSize(28);
 
-    m_menuText = Text("-BACK TO MENU-", AssetManager::GetInstance()->GetFont("Default_Font"), 36);
-    UI_Utility::AlignTextToCenter(m_menuText);
-    m_menuText.setPosition(tetris_config::screen_width / 2.0f, 480.0f);
-    m_menuText.setFillColor(tetris_config::primary_text_color);
+    m_menuButton = Button(m_playAgainButton);
+    m_menuButton.SetPosition(Vector2f(tetris_config::screen_width / 2.0f, 496.0f));
+    m_menuButton.SetLabel("BACK TO MENU");
 }
 
 void GameOverState::Update(float &deltaTime)
@@ -59,16 +56,21 @@ void GameOverState::Render(sf::RenderWindow &window)
     window.draw(m_scoreText);
     window.draw(m_levelText);
     window.draw(m_linesText);
-    window.draw(m_playAgainText);
-    window.draw(m_menuText);
 
-    if(m_data->input.IsTextClicked(m_playAgainText, window))
+    m_playAgainButton.Draw(window);
+    m_menuButton.Draw(window);
+}
+
+void GameOverState::ProcessEvent(Event &event)
+{
+    State::ProcessEvent(event);
+    if(m_playAgainButton.IsClicked(event))
     {
         std::cout << "Clicked on Play Again!" << std::endl;
         m_data->stateMachine.AddState(std::make_unique<TetrisGameState>(m_data), true);
     }
 
-    if(m_data->input.IsTextClicked(m_menuText, window))
+    if(m_menuButton.IsClicked(event))
     {
         std::cout << "Clicked on Back to Menu!" << std::endl;
         m_data->stateMachine.RemoveState();

@@ -112,6 +112,21 @@ void TetrisGameState::Render(RenderWindow& window)
 
 void TetrisGameState::ProcessEvent(Event& event)
 {
+    if(m_pauseButton.IsClicked(event))
+    {
+        if(m_isPlaying)
+        {
+            std::cout << "Clicked on Pause!" << std::endl;
+            m_pauseButton.SetLabel("> RESUME");
+            m_isPlaying = false;
+        }
+        else
+        {
+            std::cout << "Clicked on Resume!" << std::endl;
+            m_pauseButton.SetLabel("|| PAUSE");
+            m_isPlaying = true;
+        }
+    }
 }
 
 void TetrisGameState::SpawnShape()
@@ -432,15 +447,9 @@ void TetrisGameState::InitUI()
     overlayColor.a = 160;
     m_pauseOverlay.setFillColor(overlayColor);
 
-    //Init Pause Container
-    m_pauseContainer = RoundedRectangleShape(m_levelContainer);
-    m_pauseContainer.setSize(Vector2f(192.0f, 44.0f));
-    m_pauseContainer.setPosition(352, 564);
-
-    //Init Pause Label
-    m_pauseText = Text(m_levelText);
-    m_pauseText.setString("|| PAUSE");
-    m_pauseText.setPosition(372, 572);
+    //Init Pause Button
+    m_pauseButton = Button("|| PAUSE", AssetManager::GetInstance()->GetFont("Default_Font"), Vector2f(448, 586), Vector2f(192.f, 44.f));
+    m_pauseButton.SetFontSize(24);
 }
 
 void TetrisGameState::UpdateUI()
@@ -463,24 +472,8 @@ void TetrisGameState::RenderUI(RenderWindow& window)
     window.draw(m_levelText);
     window.draw(m_linesContainer);
     window.draw(m_linesText);
-    window.draw(m_pauseContainer);
-    window.draw(m_pauseText);
+
+    m_pauseButton.Draw(window);
 
     m_nextShape.Draw(window);
-
-    if(m_data->input.IsTextClicked(m_pauseText, window))
-    {
-        if(m_isPlaying)
-        {
-            std::cout << "Clicked on Pause!" << std::endl;
-            m_pauseText.setString("> RESUME");
-            m_isPlaying = false;
-        }
-        else
-        {
-            std::cout << "Clicked on Resume!" << std::endl;
-            m_pauseText.setString("|| PAUSE");
-            m_isPlaying = true;
-        }
-    }
 }

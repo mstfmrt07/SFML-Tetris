@@ -1,5 +1,6 @@
 #include "State.h"
 #include "TetrisGame.h"
+#include "Button.h"
 
 class MainMenuState : public State
 {
@@ -10,12 +11,13 @@ public:
     void Init() override;
     void Update(float& deltaTime) override;
     void Render(RenderWindow& window) override;
+    void ProcessEvent(Event& event) override;
 
 private:
     GameDataRef m_data;
 
     Sprite m_mainBG;
     Text m_titleText;
-    Text m_playText;
-    Text m_quitText;
+    Button m_playButton;
+    Button m_quitButton;
 };
