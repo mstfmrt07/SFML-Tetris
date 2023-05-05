@@ -2,14 +2,12 @@
 #include "InputManager.h"
 #include "SoundManager.h"
 #include "StateMachine.h"
-#include "AssetManager.h"
 
 struct GameData
 {
     StateMachine stateMachine;
     InputManager input;
     SoundManager soundManager;
-    AssetManager assetManager;
     int level = 0;
     int lines = 0;
     int score = 0;

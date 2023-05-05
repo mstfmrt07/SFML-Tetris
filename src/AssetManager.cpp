@@ -1,5 +1,7 @@
 #include "AssetManager.h"
 
+AssetManager* AssetManager::m_instance = nullptr;
+
 void AssetManager::LoadTexture(std::string textureName, std::string fileName)
 {
     sf::Texture texture;
@@ -28,4 +30,13 @@ void AssetManager::LoadFont(std::string fontName, std::string fileName)
 sf::Font &AssetManager::GetFont(std::string fontName)
 {
     return m_fonts.at(fontName);
+}
+
+AssetManager *AssetManager::GetInstance()
+{
+    if(m_instance == nullptr)
+    {
+        m_instance = new AssetManager();
+    }
+    return m_instance;
 }

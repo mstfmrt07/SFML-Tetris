@@ -1,6 +1,7 @@
 #include <random>
 #include "TetrisGameState.h"
 #include "GameOverState.h"
+#include "AssetManager.h"
 
 TetrisGameState::TetrisGameState(GameDataRef gameData) : m_data(gameData){}
 
@@ -19,7 +20,7 @@ void TetrisGameState::Init()
     m_ghostPositionFound = false;
 
     //Load texture from asset path.
-    m_data->assetManager.LoadTexture("Tileset", tetris_config::texture_path);
+    AssetManager::GetInstance()->LoadTexture("Tileset", tetris_config::texture_path);
 
     //Init UI
     InitUI();
@@ -30,7 +31,7 @@ void TetrisGameState::Init()
     {
         for (int j = 0; j < columns; j++)
         {
-            m_tetrisTable[i][j] = TetrisTile(Vector2i(j, i), m_data->assetManager.GetTexture("Tileset"), tetris_config::EmptyRect);
+            m_tetrisTable[i][j] = TetrisTile(Vector2i(j, i), AssetManager::GetInstance()->GetTexture("Tileset"), tetris_config::EmptyRect);
         }
     }
 
@@ -121,7 +122,7 @@ void TetrisGameState::SpawnShape()
     if (m_nextFigureIndex == -1)
     {
         currentIndex = RollDice();
-        m_currentShape = Tetromino(currentIndex, spawnPos, m_data->assetManager.GetTexture("Tileset"));
+        m_currentShape = Tetromino(currentIndex, spawnPos, AssetManager::GetInstance()->GetTexture("Tileset"));
     }
     else
     {
@@ -139,7 +140,7 @@ void TetrisGameState::SpawnShape()
     m_currentGhost.SetColorRect( IntRect( tileSize * currentIndex, tileSize, tileSize, tileSize));
     m_ghostPositionFound = false;
 
-    m_nextShape = Tetromino(m_nextFigureIndex, Vector2i(12, 3), m_data->assetManager.GetTexture("Tileset"));
+    m_nextShape = Tetromino(m_nextFigureIndex, Vector2i(12, 3), AssetManager::GetInstance()->GetTexture("Tileset"));
 }
 
 void TetrisGameState::RotateShape()
@@ -392,7 +393,7 @@ void TetrisGameState::InitUI()
     m_nextContainer.setPosition(352, 28);
 
     //Init Next Shape Title
-    m_nextText = Text("NEXT:", m_data->assetManager.GetFont("Default_Font"), 24);
+    m_nextText = Text("NEXT:", AssetManager::GetInstance()->GetFont("Default_Font"), 24);
     m_nextText.setFillColor(tetris_config::secondary_text_color);
     m_nextText.setPosition(372, 36);
 
@@ -402,7 +403,7 @@ void TetrisGameState::InitUI()
     m_levelContainer.setPosition(352, 240);
 
     //Init Level Label
-    m_levelText = Text("LEVEL: 0", m_data->assetManager.GetFont("Default_Font"), 24);
+    m_levelText = Text("LEVEL: 0", AssetManager::GetInstance()->GetFont("Default_Font"), 24);
     m_levelText.setFillColor(tetris_config::secondary_text_color);
     m_levelText.setLineSpacing(1.2f);
     m_levelText.setPosition(372, 252);

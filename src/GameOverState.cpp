@@ -2,46 +2,47 @@
 #include "TetrisConfig.h"
 #include "TetrisGameState.h"
 #include "UI_Utility.h"
+#include "AssetManager.h"
 
 GameOverState::GameOverState(GameDataRef gameData) : m_data(gameData){}
 
 void GameOverState::Init()
 {
     //Init Container
-    m_background = Sprite(m_data->assetManager.GetTexture("Main_BG"));
+    m_background = Sprite(AssetManager::GetInstance()->GetTexture("Main_BG"));
     m_background.setPosition(0.f, 0.f);
 
     //Init Title
-    m_gameOverText = Text("GAME OVER!", m_data->assetManager.GetFont("Default_Font"), 54);
+    m_gameOverText = Text("GAME OVER!", AssetManager::GetInstance()->GetFont("Default_Font"), 54);
     UI_Utility::AlignTextToCenter(m_gameOverText);
     m_gameOverText.setPosition(tetris_config::screen_width / 2.0f, 180);
     m_gameOverText.setFillColor(tetris_config::primary_text_color);
     m_gameOverText.setStyle(Text::Style::Bold);
 
     //Init Level Label
-    m_levelText = Text("LEVEL: " + std::to_string(m_data->level), m_data->assetManager.GetFont("Default_Font"), 32);
+    m_levelText = Text("LEVEL: " + std::to_string(m_data->level), AssetManager::GetInstance()->GetFont("Default_Font"), 32);
     UI_Utility::AlignTextToCenter(m_levelText);
     m_levelText.setPosition(tetris_config::screen_width / 2.0f, 240);
     m_levelText.setFillColor(tetris_config::primary_text_color);
 
     //Init Lines Label
-    m_linesText = Text("LINES: " + std::to_string(m_data->lines), m_data->assetManager.GetFont("Default_Font"), 32);
+    m_linesText = Text("LINES: " + std::to_string(m_data->lines), AssetManager::GetInstance()->GetFont("Default_Font"), 32);
     UI_Utility::AlignTextToCenter(m_linesText);
     m_linesText.setPosition(tetris_config::screen_width / 2.0f, 280);
     m_linesText.setFillColor(tetris_config::primary_text_color);
 
     //Init Score Label
-    m_scoreText = Text("SCORE: " + std::to_string(m_data->score), m_data->assetManager.GetFont("Default_Font"), 32);
+    m_scoreText = Text("SCORE: " + std::to_string(m_data->score), AssetManager::GetInstance()->GetFont("Default_Font"), 32);
     UI_Utility::AlignTextToCenter(m_scoreText);
     m_scoreText.setPosition(tetris_config::screen_width / 2.0f, 320);
     m_scoreText.setFillColor(tetris_config::primary_text_color);
 
-    m_playAgainText = Text("-PLAY AGAIN-", m_data->assetManager.GetFont("Default_Font"), 36);
+    m_playAgainText = Text("-PLAY AGAIN-", AssetManager::GetInstance()->GetFont("Default_Font"), 36);
     UI_Utility::AlignTextToCenter(m_playAgainText);
     m_playAgainText.setPosition(tetris_config::screen_width / 2.0f, 420.0f);
     m_playAgainText.setFillColor(tetris_config::primary_text_color);
 
-    m_menuText = Text("-BACK TO MENU-", m_data->assetManager.GetFont("Default_Font"), 36);
+    m_menuText = Text("-BACK TO MENU-", AssetManager::GetInstance()->GetFont("Default_Font"), 36);
     UI_Utility::AlignTextToCenter(m_menuText);
     m_menuText.setPosition(tetris_config::screen_width / 2.0f, 480.0f);
     m_menuText.setFillColor(tetris_config::primary_text_color);
