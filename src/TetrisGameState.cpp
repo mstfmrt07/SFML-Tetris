@@ -364,7 +364,6 @@ bool TetrisGameState::CheckGameOver()
     if (gameOver)
     {
         m_isPlaying = false;
-        m_data->soundManager.DisposeAll();
         m_data->stateMachine.AddState(std::make_unique<GameOverState>(m_data), true);
     }
     return gameOver;

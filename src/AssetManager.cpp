@@ -40,3 +40,25 @@ AssetManager *AssetManager::GetInstance()
     }
     return m_instance;
 }
+
+void AssetManager::LoadSoundBuffer(std::string soundName, std::string fileName)
+{
+    sf::SoundBuffer buffer;
+
+    if(buffer.loadFromFile(fileName))
+    {
+        m_soundBuffers[soundName] = buffer;
+    }
+}
+
+sf::SoundBuffer &AssetManager::GetSoundBuffer(std::string soundName)
+{
+    return m_soundBuffers.at(soundName);
+}
+
+void AssetManager::DisposeAll()
+{
+    m_soundBuffers.clear();
+    m_textures.clear();
+    m_fonts.clear();
+}

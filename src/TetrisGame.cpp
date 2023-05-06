@@ -26,6 +26,8 @@ void TetrisGame::OnProcessEvent(Event& event)
 
 void TetrisGame::OnDestroy()
 {
+    m_data->soundManager.DisposeAll();
+    AssetManager::GetInstance()->DisposeAll();
 }
 
 void TetrisGame::OnPause()
