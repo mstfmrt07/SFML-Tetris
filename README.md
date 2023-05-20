@@ -2,6 +2,8 @@
 
 This is my implementation of the popular Tetris game, written in C++ using the SFML library (No game engine is used). The game is functional with most of the features that you'd expect from a classical Tetris game.
 
+https://github.com/mstfmrt07/SFML-Tetris/assets/60856457/5275f3ef-ae5a-4f5d-afc3-efa4636c0979
+
 ## Features
 
 - ✅ **Randomizer**: The game uses the bag randomizer, which ensures that each shape is guaranteed to appear once in every seven pieces. This prevents the player from having long droughts and adds an extra layer of strategy to the game.
