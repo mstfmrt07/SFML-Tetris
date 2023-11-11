@@ -1,70 +1,67 @@
 #pragma once
 #include "Game.h"
+#include "Action.h"
 
 using namespace sf;
 
 class InputManager
 {
 public:
-	void OnProcessEvent(Event& event)
-	{
-        //Keyboard events
-        switch (event.type) {
-            case Event::KeyPressed:
-                HandleKeyPressed(event.key.code);
-                break;
-            case Event::KeyReleased:
-                HandleKeyReleased(event.key.code);
-                break;
-        }
-	}
-
-    bool IsTextClicked(sf::Text& text, sf::RenderWindow& window )
+    void OnProcessEvent(Event &event)
     {
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        //Mouse events
+        if (event.type == Event::MouseButtonPressed)
         {
-            Vector2i mousePos = sf::Mouse::getPosition(window);
-            if(text.getGlobalBounds().contains(mousePos.x, mousePos.y))
-                return true;
+            MouseClicked.Notify(Vector2i(event.mouseButton.x, event.mouseButton.y));
         }
-        return false;
+
+        //Text events
+        if (event.type == Event::TextEntered)
+        {
+            CharEntered.Notify(event.text.unicode);
+        }
+
+        //Keyboard events
+        if (event.type == Event::KeyPressed)
+        {
+            bool isMovementEvent = true;
+
+            if (event.key.code == Keyboard::Left || event.key.code == Keyboard::A)
+                m_horizontalMovement = -1;
+            else if (event.key.code == Keyboard::Right || event.key.code == Keyboard::D)
+                m_horizontalMovement = 1;
+            else
+                isMovementEvent = false;
+
+            if (isMovementEvent)
+                Moved.Notify(m_horizontalMovement);
+
+            KeyPressed.Notify(event.key.code);
+        }
+        else if (event.type == Event::KeyReleased)
+        {
+            bool isMovementEvent = true;
+
+            if (event.key.code == Keyboard::Left || event.key.code == Keyboard::A)
+                m_horizontalMovement = 0;
+            else if (event.key.code == Keyboard::Right || event.key.code == Keyboard::D)
+                m_horizontalMovement = 0;
+            else
+                isMovementEvent = false;
+
+            if (isMovementEvent)
+                Moved.Notify(m_horizontalMovement);
+
+            KeyReleased.Notify(event.key.code);
+        }
     }
 
-    int horizontalInput = 0;
-    bool hardDrop = false;
-    bool pressingDown = false;
-    bool rotating = false;
+    Action<int> Moved;
+    Action<Keyboard::Key> KeyPressed;
+    Action<Keyboard::Key> KeyReleased;
+    Action<Uint32> CharEntered;
+    Action<Vector2i> MouseClicked;
 
 private:
-    void HandleKeyPressed(Keyboard::Key& key)
-    {
-        if (key == Keyboard::Left || key == Keyboard::A)
-            horizontalInput = -1;
-        else if (key == Keyboard::Right || key == Keyboard::D)
-            horizontalInput = 1;
-
-        if (key == Keyboard::Down || key == Keyboard::S)
-            pressingDown = true;
-
-        if (key == Keyboard::Up || key == Keyboard::W)
-            rotating = true;
-
-        if (key == Keyboard::Space)
-            hardDrop = true;
-    }
-
-    void HandleKeyReleased(Keyboard::Key& key)
-    {
-        if (key == Keyboard::Left || key == Keyboard::A || key == Keyboard::Right || key == Keyboard::D)
-            horizontalInput = 0;
-
-        if (key == Keyboard::Down || key == Keyboard::S)
-            pressingDown = false;
-
-        if (key == Keyboard::Up || key == Keyboard::W)
-            rotating = false;
-
-        if (key == Keyboard::Space)
-            hardDrop = false;
-    }
+    int m_horizontalMovement = 0;
 };

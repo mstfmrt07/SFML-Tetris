@@ -38,6 +38,29 @@ void TetrisGameState::Init()
     SpawnShape();
 }
 
+void TetrisGameState::RegisterActions()
+{
+    m_moveListener.Observe(m_data->input.Moved, [this](int movement)
+    {
+        m_horizontalMovement = movement;
+    });
+
+    m_keyPressedListener.Observe(m_data->input.KeyPressed, [this](Keyboard::Key key)
+    {
+        if (key == Keyboard::Up || key == Keyboard::W)
+            RotateShape();
+        else if (key == Keyboard::Down || key == Keyboard::S)
+            m_holdingDown = true;
+        else if (key == Keyboard::Space)
+            HardDropShape();
+    });
+    m_keyReleasedListener.Observe(m_data->input.KeyReleased, [this](Keyboard::Key key)
+    {
+        if (key == Keyboard::Down || key == Keyboard::S)
+            m_holdingDown = false;
+    });
+}
+
 void TetrisGameState::Update(float& deltaTime)
 {
     //If game is not playing, return.
@@ -69,16 +92,7 @@ void TetrisGameState::Update(float& deltaTime)
     m_rotateTimer += deltaTime;
     m_hardDropTimer += deltaTime;
 
-    if (m_data->input.rotating && m_rotateTimer > tetris_config::rotate_threshold)
-    {
-        RotateShape();
-    }
     MoveShape();
-
-    if (m_data->input.hardDrop && m_hardDropTimer > tetris_config::hard_drop_threshold)
-    {
-        HardDropShape();
-    }
 
     if (!m_ghostPositionFound)
     {
@@ -160,6 +174,9 @@ void TetrisGameState::SpawnShape()
 
 void TetrisGameState::RotateShape()
 {
+    if (m_rotateTimer <= tetris_config::rotate_threshold)
+        return;
+
     if (!CheckCollision(m_currentShape.SimulateRotation()))
     {
         m_currentShape.Rotate();
@@ -174,10 +191,9 @@ void TetrisGameState::RotateShape()
 void TetrisGameState::MoveShape()
 {
     //Horizontal Movement
-    if (m_data->input.horizontalInput != 0 && m_movementTimer > tetris_config::movement_threshold)
+    if (m_horizontalMovement != 0 && m_movementTimer > tetris_config::movement_threshold)
     {
-        Vector2i movement(m_data->input.horizontalInput, 0);
-
+        Vector2i movement(m_horizontalMovement, 0);
         if (!CheckCollision(m_currentShape.SimulateMovement(movement)))
         {
             m_currentShape.Move(movement);
@@ -185,12 +201,11 @@ void TetrisGameState::MoveShape()
 
             m_data->soundManager.PlaySound(SoundManager::Move);
         }
-
         m_movementTimer = 0.f;
     }
 
     //Vertical Movement
-    float fallDelay = m_fallThresholdByLevel / (m_data->input.pressingDown ? tetris_config::fast_fall_factor : 1.f);
+    float fallDelay = m_fallThresholdByLevel / (m_holdingDown ? tetris_config::fast_fall_factor : 1.f);
 
     if (m_fallTimer > fallDelay)
     {
@@ -200,7 +215,7 @@ void TetrisGameState::MoveShape()
             m_currentShape.Move(movement);
 
             //Play the sound only when player is pressing down.
-            if (m_data->input.pressingDown)
+            if (m_holdingDown)
                 m_data->soundManager.PlaySound(SoundManager::Move);
         }
         else
@@ -239,6 +254,9 @@ void TetrisGameState::PlaceGhostShape()
 
 void TetrisGameState::HardDropShape()
 {
+    if (m_hardDropTimer <= tetris_config::hard_drop_threshold)
+        return;
+
     m_currentShape.SetPosition(m_currentGhost.GetPosition());
     PlaceShape();
 

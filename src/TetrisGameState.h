@@ -25,6 +25,7 @@ public:
     void Resume() override;
 
 private:
+    void RegisterActions();
     bool CheckCollision(std::vector<Vector2i> targetPoints);
     bool CheckGameOver();
     void MoveShape();
@@ -59,6 +60,9 @@ private:
 
     float m_fallThresholdByLevel = tetris_config::fall_threshold;
 
+    int m_horizontalMovement = 0;
+    bool m_holdingDown = false;
+
     float m_clearTimer = 0.0f;
     bool m_isClearOnProcess = false;
     std::vector<int> m_rowsOnClearProcess;
@@ -79,4 +83,9 @@ private:
     Text m_scoreText;
     Text m_linesText;
     Button m_pauseButton;
+
+    //Input Actions
+    Action<int>::Listener m_moveListener;
+    Action<Keyboard::Key>::Listener m_keyPressedListener;
+    Action<Keyboard::Key>::Listener m_keyReleasedListener;
 };
