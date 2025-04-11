@@ -11,7 +11,7 @@ namespace tetris_config
 	//Game and Asset Constants
 	const std::string game_title = "Tetris Game";
 
-    const std::string assetsPath = "../../assets/";
+    const std::string assetsPath = "../assets/";
 	const std::string texture_path = assetsPath + "tetris-tileset.png";
     const std::string icon_path = assetsPath + "game-icon.png";
     const std::string main_bg_path = assetsPath + "tetris-main.png";
